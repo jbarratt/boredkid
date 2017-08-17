@@ -18,7 +18,12 @@ func randString(s []string) string {
 	return s[n]
 }
 
-func boredString() (string, error) {
+func randomBoredString() (string, error) {
+	result, err := parseBoredSeed("{{ seed }}")
+	return result, err
+}
+
+func parseBoredSeed(seed string) (string, error) {
 
 	bored := boredMap()
 	boredFunc := template.FuncMap{}
@@ -29,7 +34,7 @@ func boredString() (string, error) {
 		}
 	}
 
-	finalString := "{{ seed }}"
+	finalString := seed
 	for {
 		parser := template.New("").Funcs(boredFunc)
 		parsed, err := parser.Parse(finalString)
@@ -52,7 +57,7 @@ func boredString() (string, error) {
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	boredSolution, err := boredString()
+	boredSolution, err := randomBoredString()
 	if err != nil {
 		log.Fatalf("error coming up with a solution: %v", err)
 	}
@@ -62,13 +67,15 @@ func main() {
 func Handle(evt json.RawMessage, ctx *runtime.Context) (interface{}, error) {
 	rand.Seed(time.Now().UnixNano())
 
-	boredSolution, err := boredString()
+	echoResponse := alexa.NewEchoResponse()
+	boredSolution, err := parseBoredSeed("{{ alexaseed }}")
+
 	if err != nil {
-		log.Fatalf("error coming up with a solution: %v", err)
+		log.Printf("error coming up with a solution: %v", err)
+		echoResponse.OutputSpeech("I had a problem coming up with an idea. Looks like this one is on you.")
+	} else {
+		echoResponse.OutputSpeech(boredSolution)
 	}
-	log.Printf("Message: %v\n", evt)
-	er := alexa.NewEchoResponse()
-	er.OutputSpeech(boredSolution)
-	log.Printf("Response: %v\n", er)
-	return er, nil
+
+	return echoResponse, nil
 }

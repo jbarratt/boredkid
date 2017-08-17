@@ -2,6 +2,14 @@ package main
 
 func boredMap() map[string][]string {
 	bored := make(map[string][]string)
+	bored["alexaseed"] = []string{
+		"How about {{ seed }}? You could also {{ seed }}",
+		"One thought is to {{ seed }}",
+		"Hm, you could {{ seed }} or even {{ seed }}!",
+		"When I'm bored, I like to {{ seed }}",
+		"My dad always told me to {{ seed }}.",
+		"When I was little, I loved to {{ seed }}",
+	}
 	bored["seed"] = []string{
 		"play {{ outsidegame }} outside",
 		"play outside",
@@ -62,8 +70,8 @@ func boredMap() map[string][]string {
 		"your bedroom",
 		"the kitchen",
 		"the place you keep your toys",
-		"the laundry",
 		"the garden",
+		"the back yard",
 	}
 	bored["familymember"] = []string{
 		"a parent",
