@@ -2,11 +2,15 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
 	"math/rand"
 	"time"
+
+	"github.com/eawsy/aws-lambda-go-core/service/lambda/runtime"
+	alexa "github.com/mikeflynn/go-alexa/skillserver"
 )
 
 func randString(s []string) string {
@@ -53,4 +57,18 @@ func main() {
 		log.Fatalf("error coming up with a solution: %v", err)
 	}
 	fmt.Println(boredSolution)
+}
+
+func Handle(evt json.RawMessage, ctx *runtime.Context) (interface{}, error) {
+	rand.Seed(time.Now().UnixNano())
+
+	boredSolution, err := boredString()
+	if err != nil {
+		log.Fatalf("error coming up with a solution: %v", err)
+	}
+	log.Printf("Message: %v\n", evt)
+	er := alexa.NewEchoResponse()
+	er.OutputSpeech(boredSolution)
+	log.Printf("Response: %v\n", er)
+	return er, nil
 }
